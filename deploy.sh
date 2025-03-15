@@ -20,21 +20,35 @@ fi
 
 # 환경 변수 로드
 if [ -f .env ]; then
+    log "기존 .env 파일을 사용합니다."
     set -a
     source .env
     set +a
-    log "환경 변수를 로드했습니다."
 else
-    log "경고: .env 파일이 없습니다. .env.production을 복사하여 사용합니다."
-    cp .env.production .env
+    log "경고: .env 파일이 없습니다. .env.example을 복사하여 사용합니다."
+    cp .env.example .env
     set -a
     source .env
     set +a
 fi
 
+# 환경 변수 확인 (디버깅용)
+log "환경 변수 확인:"
+log "DOCKER_HUB_USERNAME: $DOCKER_HUB_USERNAME"
+log "DB_HOST: $DB_HOST"
+log "DB_PORT: $DB_PORT"
+log "DB_USER: $DB_USER"
+log "DB_NAME: $DB_NAME"
+log "CORS_ORIGIN: $CORS_ORIGIN"
+
+# DOCKER_HUB_USERNAME이 설정되지 않은 경우 기본값 설정
+if [ -z "$DOCKER_HUB_USERNAME" ]; then
+    log "DOCKER_HUB_USERNAME이 설정되지 않았습니다. 기본값 'default'를 사용합니다."
+    export DOCKER_HUB_USERNAME="default"
+fi
+
 # 필수 환경 변수 확인
 required_vars=(
-    "DOCKER_HUB_USERNAME"
     "DB_HOST"
     "DB_PORT"
     "DB_USER"
@@ -45,8 +59,39 @@ required_vars=(
 
 for var in "${required_vars[@]}"; do
     if [ -z "${!var}" ]; then
-        log "오류: $var 환경 변수가 설정되지 않았습니다."
-        exit 1
+        log "경고: $var 환경 변수가 설정되지 않았습니다."
+        
+        # 기본값 설정
+        case "$var" in
+            "DB_HOST")
+                export DB_HOST="localhost"
+                log "$var 환경 변수를 'localhost'로 설정합니다."
+                ;;
+            "DB_PORT")
+                export DB_PORT="5678"
+                log "$var 환경 변수를 '5678'로 설정합니다."
+                ;;
+            "DB_USER")
+                export DB_USER="root"
+                log "$var 환경 변수를 'root'로 설정합니다."
+                ;;
+            "DB_PASSWORD")
+                export DB_PASSWORD="your_password"
+                log "$var 환경 변수를 'your_password'로 설정합니다."
+                ;;
+            "DB_NAME")
+                export DB_NAME="franchise_db"
+                log "$var 환경 변수를 'franchise_db'로 설정합니다."
+                ;;
+            "CORS_ORIGIN")
+                export CORS_ORIGIN="http://localhost:9876"
+                log "$var 환경 변수를 'http://localhost:9876'로 설정합니다."
+                ;;
+            *)
+                log "오류: $var 환경 변수에 대한 기본값이 없습니다."
+                exit 1
+                ;;
+        esac
     fi
 done
 
