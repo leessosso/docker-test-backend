@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   backend:
     image: ${DOCKER_HUB_USERNAME}/franchise-backend:latest
@@ -21,5 +19,4 @@ services:
 
 networks:
   franchise-network:
-    name: franchise-network
-    driver: bridge
+    external: true
