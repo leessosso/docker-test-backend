@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  backend:
+    image: ${DOCKER_HUB_USERNAME}/franchise-backend:latest
+    container_name: franchise-backend
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - CORS_ORIGIN=${CORS_ORIGIN}
+    networks:
+      - franchise-network
+
+networks:
+  franchise-network:
+    name: franchise-network
+    driver: bridge 
