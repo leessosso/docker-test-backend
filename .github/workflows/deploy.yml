@@ -60,8 +60,8 @@ jobs:
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
           port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           source: "docker-compose.prod.yml,deploy.sh,.env.production"
           target: "C:\\Users\\lee\\franchise-backend"
@@ -71,8 +71,8 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
           port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            wsl -e bash -c "cd /mnt/c/Users/lee/franchise-backend && mv .env.production .env && chmod +x deploy.sh && bash deploy.sh" 
+            wsl -e bash -c "cd /mnt/c/Users/lee/franchise-backend && bash deploy.sh" 
