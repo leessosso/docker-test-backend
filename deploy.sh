@@ -36,6 +36,7 @@ fi
 required_vars=(
     "DOCKER_HUB_USERNAME"
     "DB_HOST"
+    "DB_PORT"
     "DB_USER"
     "DB_PASSWORD"
     "DB_NAME"
@@ -70,6 +71,14 @@ docker pull $DOCKER_HUB_USERNAME/franchise-backend:latest || {
 log "기존 컨테이너 정리 중..."
 docker compose -f docker-compose.prod.yml down || true
 
+# 네트워크 확인 및 생성
+if ! docker network ls | grep -q "franchise-network"; then
+    log "franchise-network 네트워크를 생성합니다..."
+    docker network create franchise-network
+else
+    log "franchise-network 네트워크가 이미 존재합니다."
+fi
+
 # 새 컨테이너 시작
 log "새 컨테이너 시작 중..."
 docker compose -f docker-compose.prod.yml up -d || {
@@ -92,4 +101,5 @@ fi
 log "사용하지 않는 이미지 정리 중..."
 docker image prune -af --filter "until=24h"
 
-log "백엔드 배포가 완료되었습니다!" 
+log "백엔드 배포가 완료되었습니다!"
+log "이제 프론트엔드를 배포하세요. (cd ../docker-test && ./deploy.sh)" 
