@@ -118,13 +118,12 @@ docker compose -f docker-compose.prod.yml down || true
 
 # 네트워크 확인 및 생성
 log "franchise-network 네트워크 확인 중..."
-if docker network ls | grep -q "franchise-network"; then
-    log "기존 franchise-network 네트워크를 제거합니다..."
-    docker network rm franchise-network || true
+if ! docker network ls | grep -q "franchise-network"; then
+    log "franchise-network 네트워크를 생성합니다..."
+    docker network create franchise-network
+else
+    log "기존 franchise-network 네트워크를 사용합니다."
 fi
-
-log "franchise-network 네트워크를 생성합니다..."
-docker network create franchise-network
 
 # 새 컨테이너 시작
 log "새 컨테이너 시작 중..."
