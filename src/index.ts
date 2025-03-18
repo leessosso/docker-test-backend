@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { contactRouter } from './routes/contact';
+import { healthRouter } from './routes/health';
 import pool from './config/db';
 
 dotenv.config();
@@ -18,6 +19,7 @@ app.use(express.json());
 
 // 라우터 설정
 app.use('/api/contact', contactRouter);
+app.use('/api/health', healthRouter);
 
 // 데이터베이스 연결 테스트
 const testConnection = async () => {
